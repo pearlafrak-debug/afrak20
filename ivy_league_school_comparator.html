@@ -1,0 +1,524 @@
+
+<style>
+  :root {
+    --pink-light: #FBEAF0;
+    --pink-mid: #ED93B1;
+    --pink-strong: #D4537E;
+    --pink-dark: #993556;
+    --yellow-light: #FFFBE6;
+    --yellow-mid: #FAC775;
+    --yellow-strong: #EF9F27;
+    --yellow-dark: #BA7517;
+    --petal-bg: #FFF5F9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans, sans-serif); }
+
+  .page { padding: 1.5rem 1rem 3rem; max-width: 900px; margin: 0 auto; }
+
+  .hero {
+    text-align: center;
+    padding: 2rem 1rem 1.5rem;
+    background: linear-gradient(135deg, #FFF0F7 0%, #FFFBE6 100%);
+    border-radius: 20px;
+    border: 1.5px solid var(--pink-mid);
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .flowers {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; opacity: 0.18;
+    font-size: 32px;
+    display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-around;
+    gap: 4px; padding: 4px;
+  }
+  .hero h1 { font-size: 22px; font-weight: 500; color: var(--pink-dark); position: relative; z-index: 1; }
+  .hero p { font-size: 14px; color: #BA7517; margin-top: 6px; position: relative; z-index: 1; }
+
+  .controls {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: center;
+  }
+  .controls select, .controls input {
+    border: 1.5px solid var(--pink-mid);
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 13px;
+    background: #FFF5F9;
+    color: var(--pink-dark);
+    outline: none;
+    cursor: pointer;
+  }
+  .controls select:focus, .controls input:focus { border-color: var(--pink-strong); }
+  .filter-label { font-size: 13px; color: var(--pink-strong); font-weight: 500; }
+
+  .tab-bar {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem;
+  }
+  .tab {
+    padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 500;
+    border: 1.5px solid var(--pink-mid); cursor: pointer;
+    background: transparent; color: var(--pink-strong);
+    transition: background 0.15s;
+  }
+  .tab.active {
+    background: var(--pink-strong); color: #fff; border-color: var(--pink-strong);
+  }
+  .tab:hover:not(.active) { background: var(--pink-light); }
+
+  .school-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .school-card {
+    background: #FFF8FB;
+    border: 1.5px solid var(--pink-mid);
+    border-radius: 16px;
+    padding: 1rem 1.1rem 1.1rem;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+    position: relative;
+  }
+  .school-card:hover { border-color: var(--pink-strong); transform: translateY(-2px); }
+  .school-card.selected { border: 2px solid var(--pink-strong); background: #FFF0F7; }
+
+  .school-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .school-icon {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 500; flex-shrink: 0;
+  }
+  .school-name { font-size: 15px; font-weight: 500; color: var(--pink-dark); }
+  .school-loc { font-size: 12px; color: #BA7517; }
+
+  .gpa-bar-wrap { margin: 8px 0 6px; }
+  .gpa-label { font-size: 12px; color: #993556; margin-bottom: 3px; display: flex; justify-content: space-between; }
+  .gpa-track {
+    height: 8px; background: #F4C0D1; border-radius: 6px; overflow: hidden;
+  }
+  .gpa-fill {
+    height: 100%; border-radius: 6px;
+    background: linear-gradient(90deg, var(--yellow-mid), var(--pink-strong));
+  }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .tag {
+    font-size: 11px; padding: 3px 9px; border-radius: 10px;
+    background: #FAEEDA; color: #854F0B; border: 1px solid #FAC775;
+  }
+  .tag.pink { background: #FBEAF0; color: #993556; border-color: var(--pink-mid); }
+
+  .detail-panel {
+    background: #FFF8FB;
+    border: 1.5px solid var(--pink-mid);
+    border-radius: 16px;
+    padding: 1.25rem 1.25rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .detail-title { font-size: 18px; font-weight: 500; color: var(--pink-dark); margin-bottom: 4px; }
+  .detail-sub { font-size: 13px; color: #BA7517; margin-bottom: 1rem; }
+
+  .course-list { display: flex; flex-direction: column; gap: 10px; }
+  .course-item {
+    background: #FFF0F7;
+    border: 1px solid var(--pink-mid);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .course-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; background: #FAEEDA; flex-shrink: 0;
+  }
+  .course-name { font-size: 14px; font-weight: 500; color: var(--pink-dark); }
+  .course-desc { font-size: 12px; color: var(--color-text-secondary, #666); margin-top: 2px; }
+  .course-gpa {
+    margin-left: auto; font-size: 12px; font-weight: 500;
+    background: #FAEEDA; color: #854F0B; padding: 3px 9px; border-radius: 10px;
+    white-space: nowrap; align-self: center; flex-shrink: 0;
+  }
+
+  .stats-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .stat-box {
+    background: #FFF0F7; border: 1px solid var(--pink-mid); border-radius: 10px;
+    padding: 8px 14px; text-align: center; min-width: 90px;
+  }
+  .stat-val { font-size: 18px; font-weight: 500; color: var(--pink-dark); }
+  .stat-key { font-size: 11px; color: #BA7517; margin-top: 1px; }
+
+  .compare-btn {
+    margin-top: 1rem;
+    background: var(--pink-strong); color: #fff;
+    border: none; border-radius: 20px; padding: 8px 22px;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+  }
+  .compare-btn:hover { background: var(--pink-dark); }
+
+  .compare-table-wrap { overflow-x: auto; margin-top: 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    background: var(--pink-light); color: var(--pink-dark); font-weight: 500;
+    padding: 8px 10px; text-align: left; border-bottom: 1.5px solid var(--pink-mid);
+  }
+  td { padding: 7px 10px; border-bottom: 1px solid #F4C0D1; color: var(--color-text-primary, #222); }
+  tr:nth-child(even) td { background: #FFF5F9; }
+  tr:last-child td { border-bottom: none; }
+
+  .close-btn {
+    float: right; background: var(--pink-light); border: 1px solid var(--pink-mid);
+    color: var(--pink-dark); border-radius: 12px; padding: 4px 12px;
+    font-size: 12px; cursor: pointer;
+  }
+  .close-btn:hover { background: var(--pink-mid); color: #fff; }
+
+  .empty { text-align: center; color: var(--pink-mid); font-size: 14px; padding: 2rem; }
+
+  .section-title { font-size: 13px; font-weight: 500; color: var(--pink-strong); margin: 1rem 0 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;">Ivy League school comparator for prospective students showing top courses and GPA requirements</h2>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="flowers">🌸🌼🌸🌸🌼🌸🌼🌸🌸🌼🌸🌼🌸🌸🌼🌸🌸🌼🌸🌼</div>
+    <h1>Ivy League school explorer</h1>
+    <p>Compare top schools, programs & GPA requirements for prospective students</p>
+  </div>
+
+  <div class="controls">
+    <span class="filter-label">Filter by field:</span>
+    <select id="fieldFilter" onchange="render()">
+      <option value="">All fields</option>
+      <option value="STEM">STEM</option>
+      <option value="Humanities">Humanities</option>
+      <option value="Business">Business</option>
+      <option value="Law">Law</option>
+      <option value="Medicine">Medicine</option>
+      <option value="Social Sciences">Social Sciences</option>
+    </select>
+    <input type="text" id="searchBox" placeholder="Search schools..." oninput="render()" style="min-width:160px;" />
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('browse', this)">Browse schools</button>
+    <button class="tab" onclick="switchTab('compare', this)">Compare selected</button>
+  </div>
+
+  <div id="browseView">
+    <div class="school-grid" id="schoolGrid"></div>
+    <div id="detailPanel"></div>
+  </div>
+
+  <div id="compareView" style="display:none;">
+    <div id="compareContent"></div>
+  </div>
+
+</div>
+
+<script>
+const schools = [
+  {
+    id: "harvard", name: "Harvard University", location: "Cambridge, MA",
+    icon: "H", color: "#A32D2D", bg: "#FCEBEB",
+    gpa: 3.9, acceptance: "3.4%", founded: 1636, students: "23,000+",
+    description: "The oldest university in the US, renowned for law, medicine, and business.",
+    strengths: ["Law","Medicine","Business","Political Science"],
+    courses: [
+      { name: "Computer Science (AB)", field: "STEM", gpa: 3.9, desc: "Algorithms, systems, AI — highly competitive track." },
+      { name: "Economics", field: "Social Sciences", gpa: 3.85, desc: "Quantitative & theoretical economics with global reach." },
+      { name: "Government", field: "Social Sciences", gpa: 3.8, desc: "Political theory, comparative & international politics." },
+      { name: "Molecular Biology", field: "STEM", gpa: 3.95, desc: "Pre-med gateway; top research labs on campus." },
+      { name: "Law (JD)", field: "Law", gpa: 3.9, desc: "Harvard Law School — #1 globally ranked." },
+      { name: "MBA (HBS)", field: "Business", gpa: 3.7, desc: "Case-method learning; elite global network." },
+    ]
+  },
+  {
+    id: "yale", name: "Yale University", location: "New Haven, CT",
+    icon: "Y", color: "#185FA5", bg: "#E6F1FB",
+    gpa: 3.88, acceptance: "4.6%", founded: 1701, students: "14,500+",
+    description: "Known for arts, law, drama and one of the best undergraduate colleges globally.",
+    strengths: ["Law","Drama","Art","Political Science"],
+    courses: [
+      { name: "Law (JD)", field: "Law", gpa: 3.92, desc: "Consistently ranked the #1 law school in the US." },
+      { name: "Political Science", field: "Social Sciences", gpa: 3.82, desc: "Produces senators, diplomats, and global leaders." },
+      { name: "Theater Studies", field: "Humanities", gpa: 3.7, desc: "Yale School of Drama is world-renowned." },
+      { name: "Economics", field: "Social Sciences", gpa: 3.83, desc: "Strong research culture & faculty excellence." },
+      { name: "History", field: "Humanities", gpa: 3.78, desc: "Deep archival resources, Pulitzer-winning faculty." },
+      { name: "Biomedical Engineering", field: "STEM", gpa: 3.88, desc: "Cutting-edge research in health technologies." },
+    ]
+  },
+  {
+    id: "princeton", name: "Princeton University", location: "Princeton, NJ",
+    icon: "P", color: "#3B6D11", bg: "#EAF3DE",
+    gpa: 3.9, acceptance: "3.9%", founded: 1746, students: "10,000+",
+    description: "No professional schools — focused on deep undergraduate and graduate academics.",
+    strengths: ["Mathematics","Public Policy","Engineering","Physics"],
+    courses: [
+      { name: "Mathematics", field: "STEM", gpa: 3.95, desc: "Consistently ranked #1 math department worldwide." },
+      { name: "Public & International Affairs", field: "Social Sciences", gpa: 3.87, desc: "World-class policy school (Woodrow Wilson School)." },
+      { name: "Computer Science", field: "STEM", gpa: 3.92, desc: "Algorithms, AI, and systems with elite faculty." },
+      { name: "Physics", field: "STEM", gpa: 3.93, desc: "Home to multiple Nobel laureates in residence." },
+      { name: "English", field: "Humanities", gpa: 3.78, desc: "Creative writing & literary criticism prestige." },
+      { name: "Operations Research", field: "STEM", gpa: 3.86, desc: "Applied math for decision-making and optimization." },
+    ]
+  },
+  {
+    id: "columbia", name: "Columbia University", location: "New York City, NY",
+    icon: "C", color: "#534AB7", bg: "#EEEDFE",
+    gpa: 3.87, acceptance: "3.9%", founded: 1754, students: "36,000+",
+    description: "Located in NYC, Columbia excels in journalism, business, law, and medicine.",
+    strengths: ["Journalism","Business","Medicine","Engineering"],
+    courses: [
+      { name: "Journalism (MS)", field: "Humanities", gpa: 3.7, desc: "Columbia J-School — most prestigious journalism program." },
+      { name: "Business (MBA)", field: "Business", gpa: 3.7, desc: "Ranked top 5 globally; strong finance & entrepreneurship." },
+      { name: "Medicine (MD)", field: "Medicine", gpa: 3.85, desc: "Columbia Medical Center — cutting-edge clinical training." },
+      { name: "Computer Science", field: "STEM", gpa: 3.85, desc: "NYC location unlocks unmatched industry connections." },
+      { name: "Political Science", field: "Social Sciences", gpa: 3.8, desc: "UN access, think tanks & international exposure." },
+      { name: "Chemical Engineering", field: "STEM", gpa: 3.88, desc: "Research in energy, biotech, and materials." },
+    ]
+  },
+  {
+    id: "penn", name: "University of Pennsylvania", location: "Philadelphia, PA",
+    icon: "U", color: "#185FA5", bg: "#E6F1FB",
+    gpa: 3.87, acceptance: "5.9%", founded: 1740, students: "28,000+",
+    description: "Home to Wharton — the world's top undergraduate business school.",
+    strengths: ["Business","Medicine","Law","Engineering"],
+    courses: [
+      { name: "Wharton (Business)", field: "Business", gpa: 3.9, desc: "The world's most famous undergraduate business school." },
+      { name: "Medicine (MD)", field: "Medicine", gpa: 3.87, desc: "Perelman School of Medicine — consistently top 5." },
+      { name: "Computer & Cognitive Science", field: "STEM", gpa: 3.85, desc: "Interdisciplinary AI, robotics & cognitive science." },
+      { name: "Nursing (BSN)", field: "Medicine", gpa: 3.7, desc: "Top-ranked nursing school with simulation labs." },
+      { name: "Law (JD)", field: "Law", gpa: 3.85, desc: "Broad curriculum with global lawyering focus." },
+      { name: "International Relations", field: "Social Sciences", gpa: 3.8, desc: "Interdisciplinary policy, economics, and diplomacy." },
+    ]
+  },
+  {
+    id: "dartmouth", name: "Dartmouth College", location: "Hanover, NH",
+    icon: "D", color: "#0F6E56", bg: "#E1F5EE",
+    gpa: 3.86, acceptance: "6.2%", founded: 1769, students: "8,500+",
+    description: "Intimate liberal arts college with a strong MBA program and D-Plan flexibility.",
+    strengths: ["Liberal Arts","MBA","Engineering","Medicine"],
+    courses: [
+      { name: "Tuck MBA", field: "Business", gpa: 3.7, desc: "Intimate cohort; top-ranked for peer culture." },
+      { name: "Engineering Sciences", field: "STEM", gpa: 3.83, desc: "Highly interdisciplinary with liberal arts integration." },
+      { name: "Government", field: "Social Sciences", gpa: 3.78, desc: "Strong internship pipelines to DC and NGOs." },
+      { name: "Cognitive Science", field: "STEM", gpa: 3.8, desc: "Mind, brain, and computation — cutting edge." },
+      { name: "Economics", field: "Social Sciences", gpa: 3.79, desc: "Small classes with high faculty engagement." },
+      { name: "Earth Sciences", field: "STEM", gpa: 3.72, desc: "Environmental focus; rare field access in New England." },
+    ]
+  },
+  {
+    id: "brown", name: "Brown University", location: "Providence, RI",
+    icon: "B", color: "#993C1D", bg: "#FAECE7",
+    gpa: 3.85, acceptance: "5.4%", founded: 1764, students: "10,500+",
+    description: "Famous for the Open Curriculum — students design their own academic path.",
+    strengths: ["Open Curriculum","Neuroscience","Computer Science","Public Health"],
+    courses: [
+      { name: "Neuroscience", field: "STEM", gpa: 3.87, desc: "One of the first dedicated neuroscience programs in the US." },
+      { name: "Computer Science", field: "STEM", gpa: 3.85, desc: "Open Curriculum allows creative CS + arts combinations." },
+      { name: "Public Health (ScB)", field: "Medicine", gpa: 3.8, desc: "Community-based, equity-focused global health focus." },
+      { name: "International Relations", field: "Social Sciences", gpa: 3.78, desc: "Strong interdisciplinary policy and politics program." },
+      { name: "Visual Arts", field: "Humanities", gpa: 3.65, desc: "RISD-Brown dual degree is an elite option." },
+      { name: "Applied Mathematics", field: "STEM", gpa: 3.88, desc: "Stats, data science, and mathematical modeling." },
+    ]
+  },
+  {
+    id: "cornell", name: "Cornell University", location: "Ithaca, NY",
+    icon: "Cn", color: "#A32D2D", bg: "#FCEBEB",
+    gpa: 3.87, acceptance: "7.3%", founded: 1865, students: "25,000+",
+    description: "A research powerhouse with a hotel school, engineering, and agriculture programs.",
+    strengths: ["Engineering","Hotel Management","Agriculture","Computer Science"],
+    courses: [
+      { name: "Computer Science (CoE)", field: "STEM", gpa: 3.9, desc: "One of the top CS programs in the world." },
+      { name: "Hotel Administration", field: "Business", gpa: 3.6, desc: "SHA is the world's premier hospitality school." },
+      { name: "Electrical Engineering", field: "STEM", gpa: 3.85, desc: "Research-driven; strong industry partnerships." },
+      { name: "Industrial & Labor Relations", field: "Social Sciences", gpa: 3.78, desc: "ILR School — uniquely comprehensive HR/policy program." },
+      { name: "Medicine (Weill Cornell)", field: "Medicine", gpa: 3.88, desc: "Top medical school in NYC & Qatar campuses." },
+      { name: "Architecture", field: "Humanities", gpa: 3.72, desc: "AAP — ranked top 10 architecture program nationally." },
+    ]
+  },
+];
+
+let selectedSchool = null;
+let selectedIds = new Set();
+let activeTab = "browse";
+
+function switchTab(tab, el) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('browseView').style.display = tab === 'browse' ? '' : 'none';
+  document.getElementById('compareView').style.display = tab === 'compare' ? '' : 'none';
+  if (tab === 'compare') renderCompare();
+}
+
+function gpaWidth(gpa) {
+  return Math.round(((gpa - 3.5) / 0.5) * 100);
+}
+
+function getFieldEmoji(field) {
+  const map = { STEM: '🔬', Humanities: '📚', Business: '📊', Law: '⚖️', Medicine: '🩺', 'Social Sciences': '🌐' };
+  return map[field] || '📖';
+}
+
+function render() {
+  const field = document.getElementById('fieldFilter').value;
+  const search = document.getElementById('searchBox').value.toLowerCase();
+
+  const filtered = schools.filter(s => {
+    const matchSearch = s.name.toLowerCase().includes(search) || s.location.toLowerCase().includes(search);
+    const matchField = !field || s.courses.some(c => c.field === field);
+    return matchSearch && matchField;
+  });
+
+  const grid = document.getElementById('schoolGrid');
+  grid.innerHTML = filtered.map(s => `
+    <div class="school-card${selectedSchool === s.id ? ' selected' : ''}" onclick="showDetail('${s.id}')">
+      <div class="school-header">
+        <div class="school-icon" style="background:${s.bg};color:${s.color};font-size:13px;">${s.icon}</div>
+        <div>
+          <div class="school-name">${s.name}</div>
+          <div class="school-loc">${s.location}</div>
+        </div>
+        <div style="margin-left:auto;">
+          <input type="checkbox" title="Select for comparison" ${selectedIds.has(s.id) ? 'checked' : ''}
+            onclick="event.stopPropagation(); toggleSelect('${s.id}', this)"
+            style="width:16px;height:16px;accent-color:var(--pink-strong);cursor:pointer;" />
+        </div>
+      </div>
+      <div class="gpa-bar-wrap">
+        <div class="gpa-label">
+          <span>Avg GPA cutoff</span>
+          <span style="font-weight:500;">${s.gpa.toFixed(2)}</span>
+        </div>
+        <div class="gpa-track"><div class="gpa-fill" style="width:${gpaWidth(s.gpa)}%"></div></div>
+      </div>
+      <div style="font-size:12px;color:#993556;margin-top:4px;">Acceptance rate: <b>${s.acceptance}</b></div>
+      <div class="tag-row">
+        ${s.strengths.slice(0,3).map(str => `<span class="tag pink">${str}</span>`).join('')}
+      </div>
+    </div>
+  `).join('') || '<div class="empty">No schools match your search.</div>';
+
+  renderDetail();
+}
+
+function toggleSelect(id, el) {
+  if (el.checked) selectedIds.add(id);
+  else selectedIds.delete(id);
+}
+
+function showDetail(id) {
+  selectedSchool = selectedSchool === id ? null : id;
+  render();
+}
+
+function renderDetail() {
+  const panel = document.getElementById('detailPanel');
+  if (!selectedSchool) { panel.innerHTML = ''; return; }
+  const s = schools.find(x => x.id === selectedSchool);
+  if (!s) { panel.innerHTML = ''; return; }
+
+  const field = document.getElementById('fieldFilter').value;
+  const courses = field ? s.courses.filter(c => c.field === field) : s.courses;
+
+  panel.innerHTML = `
+    <div class="detail-panel">
+      <button class="close-btn" onclick="selectedSchool=null;render()">✕ close</button>
+      <div class="detail-title">${s.name}</div>
+      <div class="detail-sub">${s.location} · Founded ${s.founded} · ${s.students} students</div>
+      <p style="font-size:13px;color:var(--color-text-secondary,#666);margin-bottom:1rem;">${s.description}</p>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val">${s.gpa.toFixed(2)}</div><div class="stat-key">GPA cutoff</div></div>
+        <div class="stat-box"><div class="stat-val">${s.acceptance}</div><div class="stat-key">Acceptance</div></div>
+        <div class="stat-box"><div class="stat-val">${s.founded}</div><div class="stat-key">Founded</div></div>
+        <div class="stat-box"><div class="stat-val">${s.students}</div><div class="stat-key">Students</div></div>
+      </div>
+      <div class="section-title">Top courses ${field ? '· ' + field : ''}</div>
+      <div class="course-list">
+        ${courses.map(c => `
+          <div class="course-item">
+            <div class="course-icon">${getFieldEmoji(c.field)}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="course-name">${c.name}</div>
+              <div class="course-desc">${c.desc}</div>
+              <div class="tag-row" style="margin-top:5px;"><span class="tag">${c.field}</span></div>
+            </div>
+            <div class="course-gpa">GPA ${c.gpa.toFixed(2)}+</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderCompare() {
+  const panel = document.getElementById('compareContent');
+  const selected = schools.filter(s => selectedIds.has(s.id));
+  if (selected.length < 2) {
+    panel.innerHTML = `<div class="empty" style="padding:3rem 1rem;">
+      <div style="font-size:32px;margin-bottom:8px;">🌸</div>
+      Select at least 2 schools using the checkboxes in the Browse tab to compare them here.
+    </div>`;
+    return;
+  }
+  const field = document.getElementById('fieldFilter').value;
+  panel.innerHTML = `
+    <div class="detail-title" style="margin-bottom:1rem;">Comparing ${selected.length} schools</div>
+    <div class="compare-table-wrap">
+      <table>
+        <thead><tr>
+          <th>Metric</th>
+          ${selected.map(s => `<th style="color:${s.color}">${s.name.replace(' University','').replace(' College','')}</th>`).join('')}
+        </tr></thead>
+        <tbody>
+          <tr><td>Location</td>${selected.map(s => `<td>${s.location}</td>`).join('')}</tr>
+          <tr><td>Founded</td>${selected.map(s => `<td>${s.founded}</td>`).join('')}</tr>
+          <tr><td>Students</td>${selected.map(s => `<td>${s.students}</td>`).join('')}</tr>
+          <tr><td>Avg GPA cutoff</td>${selected.map(s => `<td><b>${s.gpa.toFixed(2)}</b></td>`).join('')}</tr>
+          <tr><td>Acceptance rate</td>${selected.map(s => `<td>${s.acceptance}</td>`).join('')}</tr>
+          <tr><td>Key strengths</td>${selected.map(s => `<td>${s.strengths.slice(0,3).join(', ')}</td>`).join('')}</tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="section-title" style="margin-top:1.5rem;">GPA bar comparison</div>
+    ${selected.map(s => `
+      <div style="margin-bottom:8px;">
+        <div class="gpa-label" style="font-size:13px;">
+          <span style="color:${s.color};font-weight:500;">${s.name.replace(' University','').replace(' College','')}</span>
+          <span>${s.gpa.toFixed(2)}</span>
+        </div>
+        <div class="gpa-track" style="height:12px;"><div class="gpa-fill" style="width:${gpaWidth(s.gpa)}%"></div></div>
+      </div>
+    `).join('')}
+    <div class="section-title" style="margin-top:1.5rem;">Top courses${field ? ' · ' + field : ''}</div>
+    ${selected.map(s => {
+      const courses = field ? s.courses.filter(c => c.field === field) : s.courses;
+      return `
+        <div style="margin-bottom:1.25rem;">
+          <div style="font-size:14px;font-weight:500;color:${s.color};margin-bottom:6px;">${s.name}</div>
+          <div class="course-list">
+            ${courses.map(c => `
+              <div class="course-item">
+                <div class="course-icon">${getFieldEmoji(c.field)}</div>
+                <div style="flex:1;min-width:0;">
+                  <div class="course-name">${c.name}</div>
+                  <div class="course-desc">${c.desc}</div>
+                </div>
+                <div class="course-gpa">GPA ${c.gpa.toFixed(2)}+</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+
+render();
+</script>
